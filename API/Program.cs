@@ -15,6 +15,10 @@ namespace API
             builder.Services.AddControllers();
             builder.Services.AddScoped<JoueurDAL>(); // Ajoute la DAL
             builder.Services.AddScoped<JoueurBLL>(); // Ajoute le BLL
+            builder.Services.AddScoped<SaisonDAL>(); // Ajoute la DAL
+            builder.Services.AddScoped<SaisonBLL>(); // Ajoute le BLL
+            builder.Services.AddScoped<TropheeDAL>(); // Ajoute la DAL
+            builder.Services.AddScoped<TropheeBLL>(); // Ajoute le BLL
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

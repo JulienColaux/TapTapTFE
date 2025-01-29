@@ -34,7 +34,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message });//ce format renvoie en json alors que juste badRequest(ex.Message) juste string
             }
         }
 
@@ -50,7 +50,9 @@ namespace API.Controllers
         }
 
 
-        //---------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------GET TROPHEES------------------------------------------------------------------------------------
+
+        //A voir si je supprime pas vu que cest dans joueur mais pour le moment je laisse
 
 
         [HttpGet("trophees/{id}")]
