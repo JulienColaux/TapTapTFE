@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Data.SqlClient;
+using System.Data;  // ✅ Obligatoire pour CommandType et DataTable
+using Microsoft.Data.SqlClient;  // ✅ Correct pour SQL Server
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,22 +30,22 @@ namespace DAL.Repositories
         //J ai mis la méthode en version synchrone par simpliciter a voir si je change apres
 
 
-        public List<Trophee> GetAllTropheesByJoueurId(int id)
+        public async Task<List<Trophee>> GetAllTropheesByJoueurId(int id)
         {
             List<Trophee> trophees = new List<Trophee>();
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();  // Suppression du "await"
+                await conn.OpenAsync(); // Utilisation de await pour éviter les blocages
                 string sql = "SELECT * FROM Trophée WHERE ID_Joueur = @id";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())  // Suppression du "await"
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync()) // Ajout de await ici
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync()) // Ajout de await ici
                         {
                             Trophee trophee = new Trophee
                             {
@@ -94,7 +94,7 @@ namespace DAL.Repositories
                                 XP = reader["XP"] != DBNull.Value ? reader.GetDecimal(reader.GetOrdinal("XP")) : 0m,
                                 ID_EchelleGrade = reader["ID_EchelleGrade"] != DBNull.Value ? (int?)reader["ID_EchelleGrade"] : null,
                                 Elo = reader["Elo"] != DBNull.Value ? reader.GetInt32(reader.GetOrdinal("Elo")) : 0 ,// Gestion du NULL
-                                Trophees = GetAllTropheesByJoueurId(id)
+                                Trophees = await GetAllTropheesByJoueurId(id) //rajout de await car la methode est synchrone
                             };
                         }
                     }

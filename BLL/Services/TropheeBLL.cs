@@ -31,5 +31,28 @@ namespace BLL.Services
             return await _tropheeDAL.GetTropheeById(id);
         }
 
+
+
+        public async Task<string> GetUrlImageTropheeById(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("L'ID de l'image doit être un entier positif.");
+            }
+
+            Console.WriteLine($"📢 Service : Récupération de l'URL de l'image avec ID = {id}");
+
+            string url = await _tropheeDAL.GetUrlImageTropheeById(id);
+
+            if (string.IsNullOrEmpty(url))
+            {
+                Console.WriteLine($"⚠️ Service : Aucune URL trouvée pour ID {id}");
+                return null;
+            }
+
+            Console.WriteLine($"✅ Service : URL retournée = {url}");
+            return url;
+        }
+
     }
 }

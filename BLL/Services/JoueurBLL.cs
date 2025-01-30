@@ -52,8 +52,9 @@ namespace BLL.Services
                 throw new ArgumentException("L'ID du joueur doit être un entier positif.");
             }
 
-            return  _joueurDAL.GetAllTropheesByJoueurId(id);
+            return await _joueurDAL.GetAllTropheesByJoueurId(id); // Ici, on doit bien utiliser "await"
         }
+
 
     }
 }

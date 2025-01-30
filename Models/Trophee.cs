@@ -12,5 +12,6 @@ namespace Models
         public string Nom { get; set; }
         public DateTime Date_Acquisition { get; set; }
         public int? ID_Joueur { get; set; }
+        public string Url_image { get; set; }
     }
 }

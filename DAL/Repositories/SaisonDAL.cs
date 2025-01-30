@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;  // ✅ Obligatoire pour CommandType et DataTable
+using Microsoft.Data.SqlClient;  // ✅ Correct pour SQL Server
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Models;
+
 
 namespace DAL.Repositories
 {

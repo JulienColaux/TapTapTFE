@@ -36,5 +36,28 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpGet("GetUrlImage/{id}")]
+        public async Task<IActionResult> GetUrlImageTropheeById(int id)
+        {
+            try
+            {
+                string url = await _tropheeBLL.GetUrlImageTropheeById(id);
+                if (string.IsNullOrEmpty(url))
+                {
+                    return NotFound($"Aucune image trouvée pour l'ID {id}");
+                }
+                return Ok(url);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erreur interne : {ex.Message}");
+            }
+        }
+
     }
 }
