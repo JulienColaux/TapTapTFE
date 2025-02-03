@@ -19,6 +19,10 @@ namespace API
             builder.Services.AddScoped<SaisonBLL>(); // Ajoute le BLL
             builder.Services.AddScoped<TropheeDAL>(); // Ajoute la DAL
             builder.Services.AddScoped<TropheeBLL>(); // Ajoute le BLL
+            builder.Services.AddScoped<GradeDAL>(); // Ajoute la DAL
+            builder.Services.AddScoped<GradeBLL>(); // Ajoute le BLL
+            builder.Services.AddScoped<PartieDAL>(); // Ajoute la DAL
+            builder.Services.AddScoped<PartieBLL>(); // Ajoute le BLL
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
