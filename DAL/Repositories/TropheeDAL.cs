@@ -132,5 +132,34 @@ namespace DAL.Repositories
         }
 
 
+        //--------------------------ADD TROPHEE TO JOUEUR---------------------------------------------------------------------------------------------------
+
+        //la méthode retourne l id du trophee creer au cas ou faut check 
+
+        public async Task<int> CreateTrophee(CreateTropheeDto trophee)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+
+
+                Random random = new Random();
+                int randomImageStockId = random.Next(1, 31); // génère un nombre entre 1 et 30
+
+
+                string sql = " INSERT INTO Trophée (Nom, ID_imagesStock, ID_Joueur, ID_Saison) VALUES (@Nom, @ID_imagesStock, @ID_Joueur, @ID_Saison) SELECT CAST (SCOPE_IDENTITY() AS int);";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.Add("@Nom", SqlDbType.VarChar, 50).Value = trophee.Nom;
+                    cmd.Parameters.Add("@ID_imagesStock", SqlDbType.Int).Value = randomImageStockId;
+                    cmd.Parameters.Add("@ID_Joueur", SqlDbType.Int).Value = trophee.ID_Joueur;
+                    cmd.Parameters.Add("@ID_Saison", SqlDbType.Int).Value = trophee.ID_Saison;
+
+                    var result = await  cmd.ExecuteScalarAsync();
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
     }
 }

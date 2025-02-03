@@ -39,16 +39,52 @@ namespace API.Controllers
         }
 
 
-        //-------------------------GET CLASSEMENT--------------------------------------------------------------------------------
+        //-------------------------ADD POINTS--------------------------------------------------------------------------------
 
-
-
-        [HttpGet("classement")]
-        public async Task<ActionResult<List<Joueur>>> GetClassement()
+        public class PointsDto
         {
-            return Ok(await _joueurBLL.GetClassement());
+            public int JoueurId { get; set; }
+            public int Points { get; set; }
         }
 
+
+        [HttpPost("addPoints")]
+        public async Task<IActionResult> addPoints([FromBody] PointsDto dto)
+        {
+            try
+            {
+                await _joueurBLL.AddPoints(dto.JoueurId, dto.Points);
+                return Ok("Points mis à jour");
+            }
+             catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
+        //-------------------------ADD XP--------------------------------------------------------------------------------
+
+        public class XPDto
+        {
+            public int JoueurId { get; set; }
+            public int Xp { get; set; }
+        }
+
+
+        [HttpPost("addXp")]
+        public async Task<IActionResult> addXp([FromBody] XPDto dto)
+        {
+            try
+            {
+                await _joueurBLL.AddXP(dto.JoueurId, dto.Xp);
+                return Ok("XP mis à jour");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         //--------------------------GET TROPHEES------------------------------------------------------------------------------------
 

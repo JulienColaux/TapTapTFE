@@ -59,5 +59,19 @@ namespace API.Controllers
             }
         }
 
+        //--------------------------ADD TROPHEE TO JOUEUR---------------------------------------------------------------------------------------------------
+
+
+        [HttpPost("CreateTrophee")]
+        public async Task<IActionResult> CreateTrophee([FromBody] CreateTropheeDto trophee)
+        {
+            if(trophee == null)
+            {
+                return BadRequest("Les données du trophée sont invalides.");
+            }
+
+            int tropheeId = await _tropheeBLL.CreateTrophee(trophee);
+            return Ok(new { ID_Trophée = tropheeId, Message = "Trophée créé avec succès." });
+        }
     }
 }

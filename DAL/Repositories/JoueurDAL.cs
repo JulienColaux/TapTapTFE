@@ -16,14 +16,16 @@ namespace DAL.Repositories
         //-------------------------------CONFIG  CONNECTION  STRING-------------------------------------------------------------------------------------
 
 
-
         private readonly string _connectionString;
+        private readonly TropheeDAL _tropheeDAL;
 
-        public JoueurDAL(IConfiguration configuration)
+
+        public JoueurDAL(IConfiguration configuration, TropheeDAL tropheeDAL)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
-        }
+            _tropheeDAL = tropheeDAL;
 
+        }
 
         //---------------------------------GET ALL TROPHY D UN JOUEUR----------------------------------------------------------------------------------
 
@@ -52,8 +54,9 @@ namespace DAL.Repositories
                                 ID_Trophée = reader.GetInt32(reader.GetOrdinal("ID_Trophée")),
                                 Nom = reader.GetString(reader.GetOrdinal("Nom")),
                                 Date_Acquisition = reader.GetDateTime(reader.GetOrdinal("Date_Acquisition")),
-                                ID_Joueur = reader.GetInt32(reader.GetOrdinal("ID_Joueur"))
+                                ID_Joueur = reader.GetInt32(reader.GetOrdinal("ID_Joueur")) 
                             };
+                               trophee.Url_image  =  await _tropheeDAL.GetUrlImageTropheeById(id);
                             trophees.Add(trophee);
                         }
                     }
@@ -105,40 +108,47 @@ namespace DAL.Repositories
 
 
 
-        //-----------------------------------GET CLASSEMENT JOUEUR------------------------------------------------------------------------------------
+        //-----------------------------------ADD SEASON POINT TO JOUEUR------------------------------------------------------------------------------------
 
-
-        public async Task<List<Joueur>> GetClassement()
+        public async Task AddPoints(int joueurId, int pointsToAdd)
         {
-            List<Joueur> joueurs = new List<Joueur>();
-
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
-                string sql = @"
-                    SELECT Joueur.ID_Joueur, Joueur.Nom, COUNT(Trophée.ID_Trophée) AS NombreDeTrophées
-                    FROM Joueur
-                    LEFT JOIN Trophée ON Joueur.ID_Joueur = Trophée.ID_Joueur
-                    GROUP BY Joueur.ID_Joueur, Joueur.Nom
-                    ORDER BY NombreDeTrophées DESC;";
+
+                string sql = "UPDATE Joueur SET Elo = Elo + @pointsToAdd WHERE ID_Joueur = @joueurId";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        while (reader.Read())
-                        {
-                            joueurs.Add(new Joueur
-                            {
-                                ID_Joueur = (int)reader["ID_Joueur"],
-                                Nom = reader["Nom"].ToString(),
-                            });
-                        }
-                    }
+                    cmd.Parameters.AddWithValue("@joueurId", joueurId);
+                    cmd.Parameters.AddWithValue("@pointsToAdd", pointsToAdd);
+
+                    await cmd.ExecuteNonQueryAsync();
                 }
             }
-
-            return joueurs;
         }
+
+
+        //-----------------------------------ADD  XP TO JOUEUR------------------------------------------------------------------------------------
+
+        public async Task AddXP(int joueurId, int xpToAdd)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+
+                string sql = "UPDATE Joueur SET XP = XP + @xpToAdd WHERE ID_Joueur = @joueurId";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@joueurId", joueurId);
+                    cmd.Parameters.AddWithValue("@xpToAdd", xpToAdd);
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+
     }
 }

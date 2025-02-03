@@ -33,17 +33,24 @@ namespace BLL.Services
 
 
 
-        //-----------------------------GET CLASSEMENT--------------------------------------------------------------------------
+        //-----------------------------ADD POINT--------------------------------------------------------------------------
 
-
-
-        public async Task<List<Joueur>> GetClassement()
+        public async Task AddPoints(int joueurId, int points)
         {
-            return await _joueurDAL.GetClassement();
+            await _joueurDAL.AddPoints(joueurId, points);
         }
 
 
-        //------------------------------------------------------------------------------------------------------------------------------
+        //-----------------------------ADD POINT--------------------------------------------------------------------------
+
+        public async Task AddXP(int joueurId, int xp)
+        {
+            await _joueurDAL.AddXP(joueurId, xp);
+        }
+
+
+
+        //-----------------------------GET ALL TROPHEE D UN JOUEUR------------------------------------------------------
 
         public async Task<List<Trophee>> GetAllTropheesByJoueurId(int id)
         {

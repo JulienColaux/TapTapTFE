@@ -54,5 +54,12 @@ namespace BLL.Services
             return url;
         }
 
+        //--------------------------ADD TROPHEE TO JOUEUR---------------------------------------------------------------------------------------------------
+
+        public async Task<int> CreateTrophee(CreateTropheeDto trophee)
+        {
+            return await _tropheeDAL.CreateTrophee(trophee);
+        }
+
     }
 }

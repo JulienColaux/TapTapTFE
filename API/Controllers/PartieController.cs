@@ -19,19 +19,22 @@ namespace API.Controllers
         //---------------------------------GET ALL INFO OF A PARTIE BY ID---------------------------------------------------------------
 
 
-        [HttpGet("{id}")]  //Méthode get avec un paramètre url id
-        public async Task<ActionResult<Partie>> GetPartieById(int id)  //Action result permet de renvoyer des objet ou des code http comme 404 not found par exemple
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Partie>> GetPartieById(int id)
         {
             try
             {
                 var partie = await _partieBLL.GetPartieById(id);
+                if (partie == null) return NotFound(new { message = "Aucune partie trouvée avec cet ID." });
+
                 return Ok(partie);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });//ce format renvoie en json alors que juste badRequest(ex.Message) juste string
+                return BadRequest(new { message = ex.Message });
             }
         }
+
 
 
         //---------------------------------GET ALL  PARTIEs---------------------------------------------------------------
