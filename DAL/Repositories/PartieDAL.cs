@@ -139,5 +139,57 @@ namespace DAL.Repositories
             return parties;
         }
 
+
+
+        //-----------------------------------------ADD PARTIE-------------------------------------------------------------------------------------
+
+
+        public async Task<int> AddPartie(bool amical)
+        {
+            int partieId = 0; // Pour stocker l'ID de la partie insérée
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+
+                string sql = @"INSERT INTO Partie (Date_Partie, Amical) 
+                       VALUES (GETDATE(), @Amical);
+                       SELECT SCOPE_IDENTITY();"; // Récupérer l'ID généré pour ajouter joueur
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Amical", amical);
+
+                    // Exécuter la requête et récupérer l'ID
+                    object result = await cmd.ExecuteScalarAsync();
+                    if (result != null)
+                    {
+                        partieId = Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            return partieId; // Retourne l'ID de la partie ajoutée
+        }
+
+        //-----------------------------------------ADD JOUE-------------------------------------------------------------------------------------
+
+        public  async Task AddJoue(int joueurId, int partieId, int points)
+        {
+            using(SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                string sql = "INSERT INTO Joue (ID_Joueur, ID_Partie,Points) VALUES (@joueurId, @partieId, @points);";
+
+                using(SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@joueurId", joueurId);
+                    cmd.Parameters.AddWithValue("@partieId", partieId);
+                    cmd.Parameters.AddWithValue("@points", points);
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
     }
 }

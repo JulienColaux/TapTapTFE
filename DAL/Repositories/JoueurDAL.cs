@@ -116,17 +116,43 @@ namespace DAL.Repositories
             {
                 await conn.OpenAsync();
 
-                string sql = "UPDATE Joueur SET Elo = Elo + @pointsToAdd WHERE ID_Joueur = @joueurId";
-
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                // Démarrer une transaction pour regrouper les deux mises à jour
+                using (SqlTransaction transaction = conn.BeginTransaction())
                 {
-                    cmd.Parameters.AddWithValue("@joueurId", joueurId);
-                    cmd.Parameters.AddWithValue("@pointsToAdd", pointsToAdd);
+                    try
+                    {
+                        // Mise à jour de la table Joueur : ajouter des points à la colonne Elo
+                        string sqlJoueur = "UPDATE Joueur SET Elo = Elo + @pointsToAdd WHERE ID_Joueur = @joueurId";
+                        using (SqlCommand cmdJoueur = new SqlCommand(sqlJoueur, conn, transaction))
+                        {
+                            cmdJoueur.Parameters.AddWithValue("@joueurId", joueurId);
+                            cmdJoueur.Parameters.AddWithValue("@pointsToAdd", pointsToAdd);
+                            await cmdJoueur.ExecuteNonQueryAsync();
+                        }
 
-                    await cmd.ExecuteNonQueryAsync();
+                        // Mise à jour de la table Participe : ajouter des points à la colonne Points
+                        // (Supposant que la table Participe possède une colonne ID_Joueur pour identifier le joueur)
+                        string sqlParticipe = "UPDATE Participe SET Points = Points + @pointsToAdd WHERE ID_Joueur = @joueurId";
+                        using (SqlCommand cmdParticipe = new SqlCommand(sqlParticipe, conn, transaction))
+                        {
+                            cmdParticipe.Parameters.AddWithValue("@joueurId", joueurId);
+                            cmdParticipe.Parameters.AddWithValue("@pointsToAdd", pointsToAdd);
+                            await cmdParticipe.ExecuteNonQueryAsync();
+                        }
+
+                        // Valider la transaction si les deux mises à jour ont réussi
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Annuler la transaction en cas d'erreur
+                        transaction.Rollback();
+                        throw;  // Vous pouvez aussi logger l'erreur ou la gérer selon vos besoins
+                    }
                 }
             }
         }
+
 
 
         //-----------------------------------ADD  XP TO JOUEUR------------------------------------------------------------------------------------

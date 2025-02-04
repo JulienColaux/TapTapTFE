@@ -36,5 +36,18 @@ namespace BLL.Services
             return await _partieDAL.GetAllParties();
         }
 
+
+        //-------------------------------ADD PARTIE--------------------------------------------------------------------------
+
+        public async Task AddPartie(Boolean amical)
+        {
+            await _partieDAL.AddPartie(amical);
+        }
+
+        //-------------------------------ADD JOUE--------------------------------------------------------------------------
+public async Task AddJoue(int joueurId, int partieId, int points)
+        {
+            await _partieDAL.AddJoue(joueurId, partieId, points);
+        }
     }
 }

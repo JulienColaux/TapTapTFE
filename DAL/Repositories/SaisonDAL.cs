@@ -59,5 +59,56 @@ namespace DAL.Repositories
             return saison;
         }
 
+
+        //-----------------------------------------ADD SAISON-------------------------------------------------------------------------------------
+
+
+        public async Task<int> AddSaison(int tropheeId)
+        {
+            int saisonId = 0; // Pour stocker l'ID de la partie insérée
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+
+                string sql = @"INSERT INTO Saison (Decompte, ID_Trophée) 
+                                        VALUES (DATEADD(DAY, 30, GETDATE()), @TropheeId);
+                                        SELECT SCOPE_IDENTITY();"; // Récupérer l'ID
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@TropheeId", tropheeId);
+
+                    // Exécuter la requête et récupérer l'ID
+                    object result = await cmd.ExecuteScalarAsync();
+                    if (result != null)
+                    {
+                        saisonId = Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            return saisonId; // Retourne l'ID de la partie ajoutée
+        }
+
+        //-----------------------------------------ADD JOUE-------------------------------------------------------------------------------------
+
+        public async Task AddParticipe(int joueurId, int saisonId, int points)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                string sql = "INSERT INTO Participe (ID_Joueur, ID_Saison,Points) VALUES (@joueurId, @saisonId, @points);";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@joueurId", joueurId);
+                    cmd.Parameters.AddWithValue("@saisonId", saisonId);
+                    cmd.Parameters.AddWithValue("@points", points);
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
     }
 }

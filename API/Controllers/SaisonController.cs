@@ -36,5 +36,39 @@ namespace API.Controllers
                 return BadRequest(new {message =  ex.Message});
             }
         }
+
+        //--------------------------ADD JOUE-----------------------------------------------------------------------------
+
+
+        [HttpPost("addSaison")]
+        public async Task<ActionResult> AddSaison(int tropheeId)
+        {
+            try
+            {
+                await _saisonBLL.AddSaison(tropheeId);
+                return Ok("Saison ajouter avec succé.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        //--------------------------ADD Participe-----------------------------------------------------------------------------
+
+
+        [HttpPost("addParticipe")]
+        public async Task<ActionResult> AddParticipe(int joueurId, int saisonId, int points)
+        {
+            try
+            {
+                await _saisonBLL.AddJoue(joueurId, saisonId, points);
+                return Ok("joueur ajouter a une saison ainsi que ces points");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

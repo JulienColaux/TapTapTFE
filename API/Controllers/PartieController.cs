@@ -52,5 +52,40 @@ namespace API.Controllers
                 return BadRequest(new { message = ex.Message });//ce format renvoie en json alors que juste badRequest(ex.Message) juste string
             }
         }
+
+        //--------------------------ADD PARTIE-----------------------------------------------------------------------------
+
+
+        [HttpPost("addPartie")]
+
+        public async Task<ActionResult>AddGame(Boolean amical)
+        {
+            try
+            {
+                await _partieBLL.AddPartie(amical);
+                return Ok("Partie ajouter");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
+
+        //--------------------------ADD JOUE-----------------------------------------------------------------------------
+
+
+        [HttpPost("addJoue")]
+        public async Task<ActionResult> AddJoue(int joueurId, int partieId, int points)
+        {
+            try
+            {
+                await _partieBLL.AddJoue(joueurId, partieId, points);
+                return Ok("joueur ajouter a une partie ainsi que ces points");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

@@ -29,5 +29,19 @@ namespace BLL.Services
             if (id <= 0) throw new Exception("ID invalide");
             return await _saisonDAL.GetSaisonById(id);
         }
+
+
+        //-------------------------------ADD SAISON--------------------------------------------------------------------------
+
+        public async Task AddSaison(int tropheeId )
+        {
+            await _saisonDAL.AddSaison(tropheeId);
+        }
+
+        //-------------------------------ADD PARTICIPE--------------------------------------------------------------------------
+        public async Task AddJoue(int joueurId, int saisonId, int points)
+        {
+            await _saisonDAL.AddParticipe(joueurId, saisonId, points);
+        }
     }
 }
