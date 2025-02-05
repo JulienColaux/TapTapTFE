@@ -62,6 +62,18 @@ namespace BLL.Services
             return await _joueurDAL.GetAllTropheesByJoueurId(id); // Ici, on doit bien utiliser "await"
         }
 
+        //-----------------------------------RESET SEASON POINT OF JOUEUR---------------------------------------------------------------
+
+        public async Task ResetPointsById(int joueurId)
+        {
+            if (joueurId <= 0)
+            {
+                throw new ArgumentException("L'ID du joueur doit être un entier positif.");
+            }
+
+            await _joueurDAL.ResetPointsById(joueurId); 
+        }
+
 
     }
 }

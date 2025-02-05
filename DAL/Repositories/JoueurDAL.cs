@@ -152,8 +152,24 @@ namespace DAL.Repositories
                 }
             }
         }
+        //-----------------------------------RESET SEASON POINT OF JOUEUR---------------------------------------------------------------
 
+        public async Task ResetPointsById(int joueurId)
+        {
+            using(SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                string sql = "UPDATE Joueur SET Elo = 0 WHERE ID_Joueur = @joueurId;";
 
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.Add("@joueurId", SqlDbType.Int).Value = joueurId;
+
+                    await cmd.ExecuteNonQueryAsync();
+
+                }
+            }
+        }
 
         //-----------------------------------ADD  XP TO JOUEUR------------------------------------------------------------------------------------
 
@@ -174,6 +190,7 @@ namespace DAL.Repositories
                 }
             }
         }
+
 
 
     }

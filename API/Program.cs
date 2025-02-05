@@ -1,5 +1,6 @@
 
 using BLL.Services;
+using DAL;
 using DAL.Repositories;
 
 namespace API
@@ -23,6 +24,8 @@ namespace API
             builder.Services.AddScoped<GradeBLL>(); // Ajoute le BLL
             builder.Services.AddScoped<PartieDAL>(); // Ajoute la DAL
             builder.Services.AddScoped<PartieBLL>(); // Ajoute le BLL
+            builder.Services.AddScoped<UserDAL>(); // Ajoute la DAL
+            builder.Services.AddScoped<UserBLL>(); // Ajoute le BLL
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -113,6 +113,24 @@ namespace API.Controllers
             }
         }
 
+        //-----------------------------------RESET SEASON POINT OF JOUEUR---------------------------------------------------------------
+
+
+
+        [HttpPost("ResetElo")]
+        public async Task<IActionResult> ResetPointsById(int joueurId)
+        {
+            try
+            {
+                await _joueurBLL.ResetPointsById(joueurId);
+                return Ok("Reset points OK");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
     }
 }
 
