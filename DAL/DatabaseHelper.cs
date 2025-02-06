@@ -19,7 +19,7 @@ namespace DAL
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        // ✅ Version asynchrone pour assurer la bonne gestion des connexions
+        //  Version asynchrone pour assurer la bonne gestion des connexions
         public async Task<SqlConnection> GetConnection()
         {
             var connection = new SqlConnection(_connectionString);

@@ -27,7 +27,10 @@ namespace BLL.Services
 
         public async Task<Joueur> GetJoueurDetails(int id)
         {
-            if (id <= 0) throw new System.ArgumentException("ID invalide."); //ID doit ètre positive
+            if (id <= 0)
+            {
+                throw new System.ArgumentException("ID invalide."); //ID doit ètre positive
+            }
             return await _joueurDAL.GetJoueurById(id);
         }
 

@@ -97,7 +97,7 @@ namespace DAL.Repositories
                                 XP = reader["XP"] != DBNull.Value ? reader.GetDecimal(reader.GetOrdinal("XP")) : 0m,
                                 ID_EchelleGrade = reader["ID_EchelleGrade"] != DBNull.Value ? (int?)reader["ID_EchelleGrade"] : null,
                                 Elo = reader["Elo"] != DBNull.Value ? reader.GetInt32(reader.GetOrdinal("Elo")) : 0 ,// Gestion du NULL
-                                Trophees = await GetAllTropheesByJoueurId(id) //rajout de await car la methode est synchrone
+                                Trophees = await GetAllTropheesByJoueurId(id) 
                             };
                         }
                     }
@@ -131,7 +131,6 @@ namespace DAL.Repositories
                         }
 
                         // Mise à jour de la table Participe : ajouter des points à la colonne Points
-                        // (Supposant que la table Participe possède une colonne ID_Joueur pour identifier le joueur)
                         string sqlParticipe = "UPDATE Participe SET Points = Points + @pointsToAdd WHERE ID_Joueur = @joueurId";
                         using (SqlCommand cmdParticipe = new SqlCommand(sqlParticipe, conn, transaction))
                         {

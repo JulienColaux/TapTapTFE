@@ -1,6 +1,5 @@
 
 using BLL.Services;
-using DAL;
 using DAL.Repositories;
 
 namespace API
@@ -32,6 +31,17 @@ namespace API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Ajout de la configuration CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularClient",
+                    policy => policy.WithOrigins("http://localhost:4200") // Autoriser Angular
+                                    .AllowAnyHeader()
+                                    .AllowAnyMethod()
+                                    .AllowCredentials()); // Facultatif si vous envoyez des cookies ou tokens
+            });
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -42,6 +52,9 @@ namespace API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAngularClient");
+
 
             app.UseAuthorization();
 

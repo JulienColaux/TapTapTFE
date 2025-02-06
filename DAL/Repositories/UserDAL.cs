@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DAL.Repositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using BCrypt.Net;
 
 
-namespace DAL
+namespace DAL.Repositories
 {
     public class UserDAL
     {
