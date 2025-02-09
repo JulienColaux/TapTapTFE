@@ -110,5 +110,50 @@ namespace DAL.Repositories
                 }
             }
         }
+
+
+        //--------------------------------------GET CLASSEMENT--------------------------------------------------------------------------
+
+        public async Task<List<JoueurPartie>> GetClassement(int saisonId)
+        {
+            List<JoueurPartie> classement = new List<JoueurPartie>();  // Liste des joueurs classés
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+
+                string sql = "SELECT j.ID_Joueur, j.Nom, j.Avatar_URL, SUM(p.points) AS Total_Points " +
+                             "FROM Participe p " +
+                             "JOIN Joueur j ON p.ID_Joueur = j.ID_Joueur " +
+                             "WHERE p.ID_Saison = @saisonId " +
+                             "GROUP BY j.ID_Joueur, j.Nom, j.Avatar_URL " +
+                             "ORDER BY Total_Points DESC;";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@saisonId", saisonId);
+
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())  // Boucle sur tous les joueurs trouvés
+                        {
+                            JoueurPartie joueur = new JoueurPartie
+                            {
+                                ID_Joueur = reader.GetInt32(0),  // Récupère ID_Joueur
+                                Nom = reader.GetString(1),  // Récupère Nom
+                                Avatar_URL = reader.IsDBNull(2) ? null : reader.GetString(2),  // Gère Avatar_URL NULL
+                                Points = reader.IsDBNull(3) ? 0 : reader.GetInt32(3)  // Gère Total_Points NULL
+                            };
+
+                            classement.Add(joueur);
+                        }
+                    }
+                }
+            }
+
+            return classement;  // Retourne la liste des joueurs classés
+        }
+
+
     }
 }

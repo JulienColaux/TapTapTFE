@@ -37,6 +37,25 @@ namespace API.Controllers
             }
         }
 
+
+        //-----------------------GET CLASSEMENT-----------------------------------------------------------------------------
+
+        [HttpGet("{saisonId}/classement")]
+
+        public async Task<ActionResult<List<JoueurPartie>>>GetClassement(int saisonId)
+        {
+            try
+            {
+                var classement = await _saisonBLL.GetClassement(saisonId);
+                return Ok(classement);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
+
+
         //--------------------------ADD JOUE-----------------------------------------------------------------------------
 
 

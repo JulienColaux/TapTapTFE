@@ -43,5 +43,14 @@ namespace BLL.Services
         {
             await _saisonDAL.AddParticipe(joueurId, saisonId, points);
         }
+
+        //------------------------------GET CLASSEMENT----------------------------------------------------------------------
+
+
+        public async Task<List<JoueurPartie>> GetClassement(int saisonId)
+        {
+            if (saisonId <= 0) throw new Exception("ID invalide");
+            return await _saisonDAL.GetClassement(saisonId);
+        }
     }
 }

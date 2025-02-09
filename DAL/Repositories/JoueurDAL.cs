@@ -187,9 +187,96 @@ namespace DAL.Repositories
 
                     await cmd.ExecuteNonQueryAsync();
                 }
+
+                // Vérifier si le joueur doit monter de grade
+                await UpgradeJoueurIfNeeded(joueurId, conn);
             }
         }
 
+
+        //-----------------------------------CHECK SI MONTE DE NIVEAU----------------------------------------------------------------------
+
+
+        private async Task UpgradeJoueurIfNeeded(int joueurId, SqlConnection conn)
+        {
+            bool hasUpgraded = false;
+
+            do
+            {
+                hasUpgraded = false;
+
+                // 1️⃣ Récupérer l'XP et le grade actuel du joueur
+                string sqlJoueur = "SELECT XP, Id_EchelleGrade FROM Joueur WHERE ID_Joueur = @joueurId";
+                int xpJoueur = 0;
+                int gradeActuel = 0;
+
+                using (SqlCommand cmd = new SqlCommand(sqlJoueur, conn))
+                {
+                    cmd.Parameters.AddWithValue("@joueurId", joueurId);
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            xpJoueur = Convert.ToInt32(reader["XP"]);
+                            gradeActuel = Convert.ToInt32(reader["Id_EchelleGrade"]);
+                        }
+                    }
+                }
+
+                // 2️⃣ Récupérer la valeur minimale du grade actuel
+                string sqlGrade = "SELECT ValeurMinimal FROM EchelleGrade WHERE Id_EchelleGrade = @gradeId";
+                int valeurMinimal = 0;
+
+                using (SqlCommand cmd = new SqlCommand(sqlGrade, conn))
+                {
+                    cmd.Parameters.AddWithValue("@gradeId", gradeActuel);
+                    object result = await cmd.ExecuteScalarAsync();
+                    if (result != null)
+                        valeurMinimal = Convert.ToInt32(result);
+                }
+
+                // 3️⃣ Vérifier si le joueur doit monter en grade
+                if (xpJoueur >= valeurMinimal)
+                {
+                    // Récupérer le prochain grade
+                    string sqlNextGrade = @"
+                SELECT TOP 1 Id_EchelleGrade 
+                FROM EchelleGrade 
+                WHERE ValeurMinimal > @valeurMinimal 
+                ORDER BY ValeurMinimal ASC";
+
+                    int? nextGrade = null;
+
+                    using (SqlCommand cmd = new SqlCommand(sqlNextGrade, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@valeurMinimal", valeurMinimal);
+                        object result = await cmd.ExecuteScalarAsync();
+                        if (result != null)
+                            nextGrade = Convert.ToInt32(result);
+                    }
+
+                    if (nextGrade != null)
+                    {
+                        // Déduire l'XP du grade actuel et passer au suivant
+                        xpJoueur -= valeurMinimal;
+
+                        // Mettre à jour le joueur avec le nouveau grade et l'XP restant
+                        string sqlUpdateJoueur = "UPDATE Joueur SET Id_EchelleGrade = @nextGrade, XP = @xpJoueur WHERE ID_Joueur = @joueurId";
+
+                        using (SqlCommand cmd = new SqlCommand(sqlUpdateJoueur, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@nextGrade", nextGrade);
+                            cmd.Parameters.AddWithValue("@xpJoueur", xpJoueur);
+                            cmd.Parameters.AddWithValue("@joueurId", joueurId);
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+
+                        hasUpgraded = true; // On vérifie à nouveau s'il peut encore monter
+                    }
+                }
+
+            } while (hasUpgraded); // Tant qu'il peut monter, on continue
+        }
 
 
     }
