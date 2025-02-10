@@ -53,7 +53,7 @@ namespace DAL.Repositories
                                 Date_Acquisition = reader.GetDateTime(reader.GetOrdinal("Date_Acquisition")),
                                 ID_Joueur = reader["ID_Joueur"] != DBNull.Value ? reader.GetInt32(reader.GetOrdinal("ID_Joueur")) : (int?)null
                             };
-                            trophee.Url_image = await GetUrlImageTropheeById(trophee.ID_Trophée);
+                            trophee.Url_image = await GetUrlImageTropheeByTropheeId(trophee.ID_Trophée);
                         }
                     }
                 }
@@ -93,7 +93,7 @@ namespace DAL.Repositories
             }
             return url;
         }
-
+  
 
 
         //--------------------------GET URL IMAGE TROPHEE BY TROPHEE ID-------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ namespace DAL.Repositories
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 await con.OpenAsync();
-                string sql = "SELECT Image_URL FROM imagesStock WHERE ID_Trophée = @tropheeId";
+                string sql = "SELECT i.Image_URL FROM Trophée t JOIN imagesStock i ON t.Id_imagesStock = i.Id_imagesStock WHERE t.ID_Trophée = @tropheeId;";
 
                 using (SqlCommand cmd = new SqlCommand(sql, con))
                 {
@@ -132,7 +132,7 @@ namespace DAL.Repositories
         }
 
 
-        //--------------------------ADD TROPHEE TO JOUEUR---------------------------------------------------------------------------------------------------
+        //--------------------------ADD TROPHEE---------------------------------------------------------------------------------------------------
 
         //la méthode retourne l id du trophee creer au cas ou faut check 
 
@@ -144,7 +144,7 @@ namespace DAL.Repositories
 
 
                 Random random = new Random();
-                int randomImageStockId = random.Next(1, 31); // génère un nombre entre 1 et 30
+                int randomImageStockId = random.Next(1, 4); // génère un nombre entre 1 et 30
 
 
                 string sql = " INSERT INTO Trophée (Nom, ID_imagesStock, ID_Joueur, ID_Saison) VALUES (@Nom, @ID_imagesStock, @ID_Joueur, @ID_Saison) SELECT CAST (SCOPE_IDENTITY() AS int);";

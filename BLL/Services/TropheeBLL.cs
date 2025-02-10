@@ -35,7 +35,7 @@ namespace BLL.Services
         //---------------------------GET IMAGE URL TROPHEE BY ID-------------------------------------------------------------------
 
 
-        public async Task<string> GetUrlImageTropheeById(int id)
+        public async Task<string> GetUrlImageTropheeByTropheeId(int id)
         {
             if (id <= 0)
             {
@@ -43,7 +43,7 @@ namespace BLL.Services
             }
 
 
-            string url = await _tropheeDAL.GetUrlImageTropheeById(id);
+            string url = await _tropheeDAL.GetUrlImageTropheeByTropheeId(id);
 
             if (string.IsNullOrEmpty(url))
             {

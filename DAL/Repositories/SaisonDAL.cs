@@ -50,7 +50,7 @@ namespace DAL.Repositories
                             {
                                 ID_Saison = reader.GetInt32(reader.GetOrdinal("ID_Saison")),
                                 Decompte = reader.GetDateTime(reader.GetOrdinal("Decompte")),
-                                ID_Trophee = id
+                                ID_Trophée = id
                             };
                         }
                     }
@@ -63,33 +63,33 @@ namespace DAL.Repositories
         //-----------------------------------------ADD SAISON-------------------------------------------------------------------------------------
 
 
-        public async Task<int> AddSaison(int tropheeId)
+        public async Task<int> AddSaison()
         {
-            int saisonId = 0; // Pour stocker l'ID de la partie insérée
+            int saisonId = 0; // Pour stocker l'ID de la saison insérée
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
 
-                string sql = @"INSERT INTO Saison (Decompte, ID_Trophée) 
-                                        VALUES (DATEADD(DAY, 30, GETDATE()), @TropheeId);
-                                        SELECT SCOPE_IDENTITY();"; // Récupérer l'ID
+                string sql = @"
+            INSERT INTO Saison (Decompte, ID_Trophée) 
+            VALUES (DATEADD(DAY, 30, GETDATE()), NULL); -- ID_Trophee sera NULL
+            SELECT SCOPE_IDENTITY();"; // Récupérer l'ID de la dernière insertion
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@TropheeId", tropheeId);
-
-                    // Exécuter la requête et récupérer l'ID
+                    // Exécuter la requête et récupérer l'ID de la nouvelle saison
                     object result = await cmd.ExecuteScalarAsync();
-                    if (result != null)
+                    if (result != null && int.TryParse(result.ToString(), out int id))
                     {
-                        saisonId = Convert.ToInt32(result);
+                        saisonId = id;
                     }
                 }
             }
 
-            return saisonId; // Retourne l'ID de la partie ajoutée
+            return saisonId; // Retourne l'ID de la saison ajoutée
         }
+
 
         //-----------------------------------------ADD JOUE-------------------------------------------------------------------------------------
 

@@ -35,6 +35,8 @@ namespace DAL.Repositories
         public async Task<List<Trophee>> GetAllTropheesByJoueurId(int id)
         {
             List<Trophee> trophees = new List<Trophee>();
+            Random random = new Random();
+            int randomImageStockId = random.Next(1, 4); // génère un nombre entre 1 et 30
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -56,7 +58,7 @@ namespace DAL.Repositories
                                 Date_Acquisition = reader.GetDateTime(reader.GetOrdinal("Date_Acquisition")),
                                 ID_Joueur = reader.GetInt32(reader.GetOrdinal("ID_Joueur")) 
                             };
-                               trophee.Url_image  =  await _tropheeDAL.GetUrlImageTropheeById(id);
+                               trophee.Url_image  =  await _tropheeDAL.GetUrlImageTropheeByTropheeId(trophee.ID_Trophée);
                             trophees.Add(trophee);
                         }
                     }
@@ -110,7 +112,7 @@ namespace DAL.Repositories
 
         //-----------------------------------ADD SEASON POINT TO JOUEUR------------------------------------------------------------------------------------
 
-        public async Task AddPoints(int joueurId, int pointsToAdd)
+        public async Task AddPoints(int joueurId, int seasonId, int pointsToAdd)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -131,10 +133,11 @@ namespace DAL.Repositories
                         }
 
                         // Mise à jour de la table Participe : ajouter des points à la colonne Points
-                        string sqlParticipe = "UPDATE Participe SET Points = Points + @pointsToAdd WHERE ID_Joueur = @joueurId";
+                        string sqlParticipe = "UPDATE Participe SET Points = Points + @pointsToAdd WHERE ID_Joueur = @joueurId  AND ID_Saison = @seasonId;";
                         using (SqlCommand cmdParticipe = new SqlCommand(sqlParticipe, conn, transaction))
                         {
                             cmdParticipe.Parameters.AddWithValue("@joueurId", joueurId);
+                            cmdParticipe.Parameters.AddWithValue("@seasonId", seasonId);
                             cmdParticipe.Parameters.AddWithValue("@pointsToAdd", pointsToAdd);
                             await cmdParticipe.ExecuteNonQueryAsync();
                         }

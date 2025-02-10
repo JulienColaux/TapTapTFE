@@ -33,9 +33,9 @@ namespace BLL.Services
 
         //-------------------------------ADD SAISON--------------------------------------------------------------------------
 
-        public async Task AddSaison(int tropheeId )
+        public async Task AddSaison( )
         {
-            await _saisonDAL.AddSaison(tropheeId);
+            await _saisonDAL.AddSaison();
         }
 
         //-------------------------------ADD PARTICIPE--------------------------------------------------------------------------

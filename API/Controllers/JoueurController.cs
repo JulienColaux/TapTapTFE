@@ -44,6 +44,8 @@ namespace API.Controllers
         public class PointsDto
         {
             public int JoueurId { get; set; }
+
+            public int SeasonId { get; set; }
             public int Points { get; set; }
         }
 
@@ -53,7 +55,7 @@ namespace API.Controllers
         {
             try
             {
-                await _joueurBLL.AddPoints(dto.JoueurId, dto.Points);
+                await _joueurBLL.AddPoints(dto.JoueurId, dto.SeasonId, dto.Points);
                 return Ok("Points mis à jour");
             }
              catch (Exception ex)

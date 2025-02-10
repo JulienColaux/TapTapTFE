@@ -10,6 +10,6 @@ namespace Models
     {
         public int ID_Saison {  get; set; }
         public DateTime Decompte {  get; set; }
-        public int ID_Trophee { get; set; }
+        public int? ID_Trophée { get; set; } = null;
     }
 }

@@ -38,9 +38,9 @@ namespace BLL.Services
 
         //-----------------------------ADD POINT--------------------------------------------------------------------------
 
-        public async Task AddPoints(int joueurId, int points)
+        public async Task AddPoints(int joueurId, int seasonId, int points)
         {
-            await _joueurDAL.AddPoints(joueurId, points);
+            await _joueurDAL.AddPoints(joueurId, seasonId, points);
         }
 
 

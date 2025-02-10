@@ -38,11 +38,11 @@ namespace API.Controllers
 
 
         [HttpGet("GetUrlImage/{id}")]
-        public async Task<IActionResult> GetUrlImageTropheeById(int id)
+        public async Task<IActionResult> GetUrlImageTropheeByTropheeId(int id)
         {
             try
             {
-                string url = await _tropheeBLL.GetUrlImageTropheeById(id);
+                string url = await _tropheeBLL.GetUrlImageTropheeByTropheeId(id);
                 if (string.IsNullOrEmpty(url))
                 {
                     return NotFound($"Aucune image trouvée pour l'ID {id}");
