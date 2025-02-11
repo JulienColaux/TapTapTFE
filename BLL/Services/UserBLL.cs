@@ -42,5 +42,27 @@ namespace BLL.Services
 
             return _userDAL.ValidateUser(email, password);
         }
+
+        //------------------------------GET USER JOUEUR ID----------------------------------------------------------------------------
+
+        public int? GetJoueurIDWithUserId(int userId)
+        {
+            return _userDAL.GetJoueurIdWithUserId(userId);
+        }
+
+
+        //------------------------------GET USER  ID BY MAIL----------------------------------------------------------------------------
+
+
+        public int? GetUserIdByEmail(string email)
+        {
+            // Validation de l'email
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentException("L'email ne peut pas être vide.");
+            }
+
+            return _userDAL.GetUserIdWithMail(email);
+        }
     }
 }

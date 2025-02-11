@@ -70,5 +70,43 @@ namespace DAL.Repositories
                 return false;
             }
         }
+
+        //------------------------------GET USER  ID BY MAIL----------------------------------------------------------------------------
+        public int? GetUserIdWithMail(string mail)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT ID_Connexion FROM Userr WHERE Email = @mail;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@mail", mail);
+
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+
+                // Vérifier si le résultat est NULL
+                return result != null ? (int?)result : null;
+            }
+        }
+
+        //------------------------------GET USER JOUEUR ID----------------------------------------------------------------------------
+
+        public int? GetJoueurIdWithUserId(int userId)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT ID_Joueur FROM Joueur WHERE ID_Connexion = @userId;";
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue("@userId", userId);
+
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+
+                // Vérifier si le résultat est NULL
+                return result != null ? (int?)result : null;
+            }
+        }
+
     }
 }

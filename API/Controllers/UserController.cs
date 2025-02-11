@@ -44,6 +44,61 @@ namespace API.Controllers
 
             return Unauthorized(new { message = "Invalid credentials" });
         }
+
+        //------------------------------GET USER JOUEUR ID----------------------------------------------------------------------------
+
+
+        [HttpGet("getJoueurId/{userId}")]
+        public IActionResult GetJoueurId(int userId)
+        {
+            try
+            {
+                int? joueurId = _userBLL.GetJoueurIDWithUserId(userId);
+
+                if (joueurId == null)
+                {
+                    return NotFound(new { message = "Joueur non trouvé pour cet utilisateur." });
+                }
+
+                return Ok(new { joueurId });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Une erreur interne s'est produite." });
+            }
+        }
+
+
+        //------------------------------GET USER  ID BY MAIL----------------------------------------------------------------------------
+
+
+        [HttpGet("getUserId")]
+        public IActionResult GetUserId([FromQuery] string email)
+        {
+            try
+            {
+                int? userId = _userBLL.GetUserIdByEmail(email);
+
+                if (userId == null)
+                {
+                    return NotFound(new { message = "Utilisateur non trouvé pour cet email." });
+                }
+
+                return Ok(new { userId });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Une erreur interne s'est produite." });
+            }
+        }
     }
 
 }
