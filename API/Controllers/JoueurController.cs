@@ -133,6 +133,22 @@ namespace API.Controllers
             }
         }
 
+        //-----------------------------------GET ALL JOUEUR NAME AND ID-----------------------------------------------------------------------------------
+
+        [HttpGet("gettAllNames")]  
+        public async Task<ActionResult<List<joueurAddPartie>>> GetAllJoueurName()  
+        {
+            try
+            {
+                var joueurs = await _joueurBLL.GetAllJoueurName();
+                return Ok(joueurs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });//ce format renvoie en json alors que juste badRequest(ex.Message) juste string
+            }
+        }
+
     }
 }
 

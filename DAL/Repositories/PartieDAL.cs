@@ -4,11 +4,13 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DAL.Repositories
 {
+
     public class PartieDAL
     {
         //-------------------------------CONFIG  CONNECTION  STRING-------------------------------------------------------------------------------------
@@ -80,7 +82,7 @@ namespace DAL.Repositories
             return partie;
         }
 
-        //---------------------------------GET ALL INFO OF A PARTIE----------------------------------------------------------------------------------
+        //---------------------------------GET ALL  PARTIE----------------------------------------------------------------------------------
 
         public async Task<List<Partie>> GetAllParties()
         {
@@ -147,7 +149,7 @@ namespace DAL.Repositories
         public async Task<int> AddPartie(bool amical)
         {
             int partieId = 0; // Pour stocker l'ID de la partie insérée
-
+             
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 await conn.OpenAsync();

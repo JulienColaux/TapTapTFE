@@ -77,6 +77,10 @@ namespace BLL.Services
             await _joueurDAL.ResetPointsById(joueurId); 
         }
 
-
+        //-----------------------------------GET ALL JOUEUR NAME AND ID-----------------------------------------------------------------------------------
+        public async Task<List<joueurAddPartie>> GetAllJoueurName()
+        {
+           return await _joueurDAL.GetAllJoueurName();
+        }
     }
 }

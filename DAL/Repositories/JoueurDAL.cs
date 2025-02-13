@@ -108,11 +108,43 @@ namespace DAL.Repositories
             return joueur;
         }
 
+        //-----------------------------------GET ALL JOUEUR NAME AND ID-----------------------------------------------------------------------------------
 
 
-        //-----------------------------------ADD SEASON POINT TO JOUEUR------------------------------------------------------------------------------------
 
-        public async Task AddPoints(int joueurId, int seasonId, int pointsToAdd)
+public async Task<List<joueurAddPartie>> GetAllJoueurName()
+    {
+        List<joueurAddPartie> joueurs = new List<joueurAddPartie>();
+
+        using (SqlConnection conn = new SqlConnection(_connectionString))
+        {
+            await conn.OpenAsync();
+            string sql = "SELECT ID_Joueur, Nom FROM joueur;";
+
+            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            {
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync()) // Utilisation de ReadAsync() pour meilleure performance
+                    {
+                        joueurs.Add(new joueurAddPartie
+                        {
+                            ID_Joueur = reader.GetInt32(reader.GetOrdinal("ID_Joueur")),
+                            Nom = reader["Nom"] != DBNull.Value ? reader["Nom"].ToString() : "Inconnu",
+                        });
+                    }
+                }
+            }
+        }
+        return joueurs; // Retourne la liste des joueurs
+    }
+
+
+
+
+    //-----------------------------------ADD SEASON POINT TO JOUEUR------------------------------------------------------------------------------------
+
+    public async Task AddPoints(int joueurId, int seasonId, int pointsToAdd)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {

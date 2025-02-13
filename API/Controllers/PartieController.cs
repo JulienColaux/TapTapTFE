@@ -4,11 +4,10 @@ using Models;
 
 namespace API.Controllers
 {
+    [Route("api/[controller]")] // Route RESTful
+    [ApiController]
     public class PartieController : Controller
     {
-        //---------------------INJECTION BLL-------------------------------------------------------------------------------------
-
-
         private readonly PartieBLL _partieBLL;
 
         public PartieController(PartieBLL partieBLL)
@@ -16,9 +15,7 @@ namespace API.Controllers
             _partieBLL = partieBLL;
         }
 
-        //---------------------------------GET ALL INFO OF A PARTIE BY ID---------------------------------------------------------------
-
-
+        // Récupérer une partie par ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Partie>> GetPartieById(int id)
         {
@@ -35,57 +32,62 @@ namespace API.Controllers
             }
         }
 
-
-
-        //---------------------------------GET ALL  PARTIEs---------------------------------------------------------------
-
-        [HttpGet("AllParties")]  //Méthode get avec un paramètre url id
-        public async Task<ActionResult<List<Partie>>> GetAllParties() 
+        // Récupérer toutes les parties
+        [HttpGet("allParties")]
+        public async Task<ActionResult<List<Partie>>> GetAllParties()
         {
             try
             {
-                var partie = await _partieBLL.GetAllParties();
-                return Ok(partie);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });//ce format renvoie en json alors que juste badRequest(ex.Message) juste string
-            }
-        }
-
-        //--------------------------ADD PARTIE-----------------------------------------------------------------------------
-
-
-        [HttpPost("addPartie")]
-
-        public async Task<ActionResult>AddGame(Boolean amical)
-        {
-            try
-            {
-                await _partieBLL.AddPartie(amical);
-                return Ok("Partie ajouter");
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(new {message = ex.Message});
-            }
-        }
-
-        //--------------------------ADD JOUE-----------------------------------------------------------------------------
-
-
-        [HttpPost("addJoue")]
-        public async Task<ActionResult> AddJoue(int joueurId, int partieId, int points)
-        {
-            try
-            {
-                await _partieBLL.AddJoue(joueurId, partieId, points);
-                return Ok("joueur ajouter a une partie ainsi que ces points");
+                var parties = await _partieBLL.GetAllParties();
+                return Ok(parties);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        // Ajouter une partie (Body au lieu de Query)
+        [HttpPost]
+        public async Task<ActionResult> AddGame([FromBody] PartieCreateDTO partieDTO)
+        {
+            try
+            {
+                int partieId = await _partieBLL.AddPartie(partieDTO.Amical);
+                return Ok(new { id = partieId }); // Renvoie l'ID au client
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
+        // Ajouter un joueur à une partie (Body + meilleure structuration)
+        [HttpPost("{partieId}/joueur")]
+        public async Task<ActionResult> AddJoue(int partieId, int JoueurId, int Points)
+        {
+            try
+            {
+                await _partieBLL.AddJoue(JoueurId, partieId, Points);
+                return Ok(new { message = "Joueur ajouté à la partie avec succès." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+    }
+
+    // DTOs pour structurer les entrées POST
+    public class PartieCreateDTO
+    {
+        public bool Amical { get; set; }
+    }
+
+    public class JoueCreateDTO
+    {
+        public int JoueurId { get; set; }
+        public int Points { get; set; }
     }
 }

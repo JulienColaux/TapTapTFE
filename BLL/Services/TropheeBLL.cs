@@ -61,5 +61,12 @@ namespace BLL.Services
             return await _tropheeDAL.CreateTrophee(trophee);
         }
 
+
+        //--------------------------GET ALL TROPHEES---------------------------------------------------------------------------------------------------
+
+        public async Task<List<TropheeForGetAll>> GetAllTrophees()
+        {
+            return await _tropheeDAL.GetAllTrophee();
+        }
     }
 }

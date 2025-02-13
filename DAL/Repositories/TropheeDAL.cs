@@ -161,5 +161,41 @@ namespace DAL.Repositories
                 }
             }
         }
+
+        //--------------------------GET ALL TROPHEES--------------------------------------------------------------------------------------------------
+
+
+        public async Task<List<TropheeForGetAll>> GetAllTrophee()
+        {
+            List<TropheeForGetAll> trophees = new List<TropheeForGetAll>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                string sql = "SELECT ID_Trophée, ID_Joueur, ID_Saison, Nom, Date_Acquisition, ID_ImagesStock  FROM Trophée;";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync()) // Utilisation de ReadAsync() pour meilleure performance
+                        {
+                            int idTrophee = reader.GetInt32(reader.GetOrdinal("ID_Trophée"));
+
+                            trophees.Add(new TropheeForGetAll
+                            {
+                                ID_Trophée = reader.GetInt32(reader.GetOrdinal("ID_Trophée")),
+                                ID_Joueur = reader.GetInt32(reader.GetOrdinal("ID_Joueur")),
+                                ID_Saison = reader.GetInt32(reader.GetOrdinal("ID_Saison")),
+                                Nom = reader["Nom"] != DBNull.Value ? reader["Nom"].ToString() : "Inconnu",
+                                Date_Acquisition = reader.GetDateTime(reader.GetOrdinal("Date_Acquisition")),
+                                Url_image = await GetUrlImageTropheeByTropheeId(idTrophee)
+                            });
+                        }
+                    }
+                }
+            }
+            return trophees; // Retourne la liste des joueurs
+        }
     }
 }

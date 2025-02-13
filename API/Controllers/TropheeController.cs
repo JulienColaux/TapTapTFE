@@ -37,6 +37,8 @@ namespace API.Controllers
         }
 
 
+
+
         [HttpGet("GetUrlImage/{id}")]
         public async Task<IActionResult> GetUrlImageTropheeByTropheeId(int id)
         {
@@ -73,5 +75,21 @@ namespace API.Controllers
             int tropheeId = await _tropheeBLL.CreateTrophee(trophee);
             return Ok(new { ID_Trophée = tropheeId, Message = "Trophée créé avec succès." });
         }
+
+    //--------------------------GET ALL TROPHEES-------------------------------------------------------------------------------------------------------------
+
+    [HttpGet("GetAllTrophee")]
+    public async Task<IActionResult> GetAllTrophee()
+    {
+        try
+        {
+            var trophees = await _tropheeBLL.GetAllTrophees();
+            return Ok(trophees);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
     }
 }

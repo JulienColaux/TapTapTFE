@@ -39,13 +39,14 @@ namespace BLL.Services
 
         //-------------------------------ADD PARTIE--------------------------------------------------------------------------
 
-        public async Task AddPartie(Boolean amical)
+        public async Task<int> AddPartie(bool amical)
         {
-            await _partieDAL.AddPartie(amical);
+            // Retourne l'ID de la partie créée
+            return await _partieDAL.AddPartie(amical);
         }
 
         //-------------------------------ADD JOUE--------------------------------------------------------------------------
-public async Task AddJoue(int joueurId, int partieId, int points)
+        public async Task AddJoue(int joueurId, int partieId, int points)
         {
             await _partieDAL.AddJoue(joueurId, partieId, points);
         }
