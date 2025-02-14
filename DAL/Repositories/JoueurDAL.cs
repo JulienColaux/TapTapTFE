@@ -165,7 +165,8 @@ public async Task<List<joueurAddPartie>> GetAllJoueurName()
                         }
 
                         // Mise à jour de la table Participe : ajouter des points à la colonne Points
-                        string sqlParticipe = "UPDATE Participe SET Points = Points + @pointsToAdd WHERE ID_Joueur = @joueurId  AND ID_Saison = @seasonId;";
+                        string sqlParticipe = "UPDATE Participe SET Points = Points + @pointsToAdd " +
+                            "WHERE ID_Joueur = @joueurId  AND ID_Saison = @seasonId;";
                         using (SqlCommand cmdParticipe = new SqlCommand(sqlParticipe, conn, transaction))
                         {
                             cmdParticipe.Parameters.AddWithValue("@joueurId", joueurId);
@@ -240,7 +241,7 @@ public async Task<List<joueurAddPartie>> GetAllJoueurName()
             {
                 hasUpgraded = false;
 
-                // 1️⃣ Récupérer l'XP et le grade actuel du joueur
+                //  Récupérer l'XP et le grade actuel du joueur
                 string sqlJoueur = "SELECT XP, Id_EchelleGrade FROM Joueur WHERE ID_Joueur = @joueurId";
                 int xpJoueur = 0;
                 int gradeActuel = 0;
@@ -258,7 +259,7 @@ public async Task<List<joueurAddPartie>> GetAllJoueurName()
                     }
                 }
 
-                // 2️⃣ Récupérer la valeur minimale du grade actuel
+                //  Récupérer la valeur minimale du grade actuel
                 string sqlGrade = "SELECT ValeurMinimal FROM EchelleGrade WHERE Id_EchelleGrade = @gradeId";
                 int valeurMinimal = 0;
 
@@ -270,7 +271,7 @@ public async Task<List<joueurAddPartie>> GetAllJoueurName()
                         valeurMinimal = Convert.ToInt32(result);
                 }
 
-                // 3️⃣ Vérifier si le joueur doit monter en grade
+                //  Vérifier si le joueur doit monter en grade
                 if (xpJoueur >= valeurMinimal)
                 {
                     // Récupérer le prochain grade
