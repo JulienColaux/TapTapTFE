@@ -112,39 +112,43 @@ namespace DAL.Repositories
 
 
 
-public async Task<List<joueurAddPartie>> GetAllJoueurName()
-    {
-        List<joueurAddPartie> joueurs = new List<joueurAddPartie>();
-
-        using (SqlConnection conn = new SqlConnection(_connectionString))
+        public async Task<List<joueurAddPartie>> GetAllJoueurName()
         {
-            await conn.OpenAsync();
-            string sql = "SELECT ID_Joueur, Nom FROM joueur;";
+            List<joueurAddPartie> joueurs = new List<joueurAddPartie>();
 
-            using (SqlCommand cmd = new SqlCommand(sql, conn))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                await conn.OpenAsync();
+                string sql = "SELECT ID_Joueur, Nom, Avatar_URL FROM joueur;";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    while (await reader.ReadAsync()) // Utilisation de ReadAsync() pour meilleure performance
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        joueurs.Add(new joueurAddPartie
+                        while (await reader.ReadAsync()) // Utilisation de ReadAsync() pour meilleure performance
                         {
-                            ID_Joueur = reader.GetInt32(reader.GetOrdinal("ID_Joueur")),
-                            Nom = reader["Nom"] != DBNull.Value ? reader["Nom"].ToString() : "Inconnu",
-                        });
+                            var avatar = reader["Avatar_URL"] != DBNull.Value ? reader["Avatar_URL"].ToString() : "Inconnu";
+                            Console.WriteLine($"Avatar_URL récupéré: {avatar}");
+                            joueurs.Add(new joueurAddPartie
+                            {
+                                ID_Joueur = reader.GetInt32(reader.GetOrdinal("ID_Joueur")),
+                                Nom = reader["Nom"] != DBNull.Value ? reader["Nom"].ToString() : "Inconnu",
+                                Avatar_URL = reader["Avatar_URL"] != DBNull.Value ? reader["Avatar_URL"].ToString() : "Inconnu"
+                            });
+                        }
                     }
                 }
             }
+            return joueurs; // Retourne la liste des joueurs
         }
-        return joueurs; // Retourne la liste des joueurs
-    }
 
 
 
 
-    //-----------------------------------ADD SEASON POINT TO JOUEUR------------------------------------------------------------------------------------
 
-    public async Task AddPoints(int joueurId, int seasonId, int pointsToAdd)
+        //-----------------------------------ADD SEASON POINT TO JOUEUR------------------------------------------------------------------------------------
+
+        public async Task AddPoints(int joueurId, int seasonId, int pointsToAdd)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {

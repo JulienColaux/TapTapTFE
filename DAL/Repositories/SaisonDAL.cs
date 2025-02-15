@@ -29,35 +29,47 @@ namespace DAL.Repositories
         //Attention ici check si ca marche parcque j ai mis que l id trophee = id saison donc meme si a priori cest le cas a voir
 
 
-        public async Task<Saison>GetSaisonById(int id)
+        public async Task<Saison> GetSaisonById(int id)
         {
             Saison saison = null;
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 await conn.OpenAsync();
-                string sql = "SELECT * FROM Saison WHERE ID_Saison = @id ";
+
+                //  Récupérer la saison actuelle
+                string sql = "SELECT * FROM Saison WHERE ID_Saison = @id";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
 
-                    using(SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        if (reader.Read())
+                        if (await reader.ReadAsync()) //  Utiliser await ici
                         {
                             saison = new Saison
                             {
                                 ID_Saison = reader.GetInt32(reader.GetOrdinal("ID_Saison")),
                                 Decompte = reader.GetDateTime(reader.GetOrdinal("Decompte")),
-                                ID_Trophée = id
+                                ID_Trophée = reader.IsDBNull(reader.GetOrdinal("ID_Trophée")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("ID_Trophée"))
                             };
                         }
                     }
                 }
+
+                //2️⃣ Vérifier si la saison est expirée
+                if (saison != null && saison.Decompte <= DateTime.UtcNow)
+                {
+                    Console.WriteLine("⏳ Saison expirée, création d'une nouvelle saison...");
+                    int newSaisonId = await AddSaison(); //  Crée une nouvelle saison
+                    return await GetSaisonById(newSaisonId); //  Retourne la nouvelle saison
+                }
+
+                return saison; //  Retourne la saison actuelle si elle est encore valide
             }
-            return saison;
         }
+
 
 
         //-----------------------------------------ADD SAISON-------------------------------------------------------------------------------------

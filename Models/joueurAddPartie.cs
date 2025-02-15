@@ -11,5 +11,7 @@ namespace Models
         public int ID_Joueur { get; set; }
         public string Nom { get; set; }
 
+        public string Avatar_URL { get; set; }
+
     }
 }
