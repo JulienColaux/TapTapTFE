@@ -144,7 +144,7 @@ namespace DAL.Repositories
 
 
                 Random random = new Random();
-                int randomImageStockId = random.Next(1, 4); // génère un nombre entre 1 et 30
+                int randomImageStockId = random.Next(1, 8); // génère un nombre entre 1 et 30
 
 
                 string sql = " INSERT INTO Trophée (Nom, ID_imagesStock, ID_Joueur, ID_Saison) VALUES (@Nom, @ID_imagesStock, @ID_Joueur, @ID_Saison) SELECT CAST (SCOPE_IDENTITY() AS int);";
