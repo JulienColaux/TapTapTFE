@@ -58,20 +58,20 @@ namespace API.Controllers
 
         //--------------------------ADD Saison-----------------------------------------------------------------------------
 
-
         [HttpPost("addSaison")]
         public async Task<ActionResult> AddSaison()
         {
             try
             {
-                await _saisonBLL.AddSaison();
-                return Ok("Saison ajouter avec succé.");
+                int saisonId = await _saisonBLL.AddSaison();
+                return Ok(new { message = "Saison ajoutée avec succès.", saisonId = saisonId });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
 
         //--------------------------ADD Participe-----------------------------------------------------------------------------
 
